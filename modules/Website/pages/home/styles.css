@@ -1,0 +1,208 @@
+body {
+  background-color: rgb(20, 20, 20);
+  color: white;
+}
+
+#chatList {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  padding: 6px;
+}
+
+#chatList .chat {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  padding: 0px 15px 0px 10px;
+  transition: all ease-in-out 0.2s;
+  -webkit-transition: all ease-in-out 0.2s;
+  -moz-transition: all ease-in-out 0.2s;
+  -ms-transition: all ease-in-out 0.2s;
+  -o-transition: all ease-in-out 0.2s;
+}
+
+#chatList .chat img {
+  height: 65px;
+  width: 65px;
+  padding: 8px;
+  transition: all ease-in-out 0.2s;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  -webkit-transition: all ease-in-out 0.2s;
+  -moz-transition: all ease-in-out 0.2s;
+  -ms-transition: all ease-in-out 0.2s;
+  -o-transition: all ease-in-out 0.2s;
+}
+
+#chatList .chat:hover img {
+  transform: scale(1.4);
+  -webkit-transform: scale(1.4);
+  -moz-transform: scale(1.4);
+  -ms-transform: scale(1.4);
+  -o-transform: scale(1.4);
+}
+
+#chatList .chat .info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 15px;
+  transition: all ease-in-out 0.2s;
+  -webkit-transition: all ease-in-out 0.2s;
+  -moz-transition: all ease-in-out 0.2s;
+  -ms-transition: all ease-in-out 0.2s;
+  -o-transition: all ease-in-out 0.2s;
+}
+
+#chatList .chat:hover .info {
+  transform: translateX(15px);
+  -webkit-transform: translateX(15px);
+  -moz-transform: translateX(15px);
+  -ms-transform: translateX(15px);
+  -o-transform: translateX(15px);
+}
+
+#chatList .chat .info h4 {
+  font-weight: bold;
+  color: white;
+}
+
+#chatList .chat .info p {
+  color: rgb(186, 186, 186);
+  width: 95%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  white-space: nowarp;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#chatList .chat .time {
+  color: rgb(51, 140, 255);
+  font-weight: bold;
+}
+
+#chatList .chat:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transform: scale(0.99);
+  -webkit-transform: scale(0.99);
+  -moz-transform: scale(0.99);
+  -ms-transform: scale(0.99);
+  -o-transform: scale(0.99);
+}
+
+/* ============== */
+/* === UIBALL === */
+/* ============== */
+
+.containerCube {
+  --uib-size: 25vh;
+  --uib-color: rgb(255, 255, 255);
+  --uib-speed: 1.75s;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 20%;
+  justify-content: space-between;
+  width: var(--uib-size);
+  height: calc(var(--uib-size) * 0.6);
+  margin-top: 50vh;
+}
+
+.cube {
+  flex-shrink: 0;
+  width: calc(var(--uib-size) * 0.2);
+  height: calc(var(--uib-size) * 0.2);
+  animation: jump var(--uib-speed) ease-in-out infinite;
+}
+
+.cube__inner {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 25%;
+  background-color: var(--uib-color);
+  transform-origin: center bottom;
+  animation: morph var(--uib-speed) ease-in-out infinite;
+  transition: background-color 0.3s ease;
+}
+
+.cube:nth-child(2) {
+  animation-delay: calc(var(--uib-speed) * -0.36);
+
+  .cube__inner {
+    animation-delay: calc(var(--uib-speed) * -0.36);
+  }
+}
+.cube:nth-child(3) {
+  animation-delay: calc(var(--uib-speed) * -0.2);
+
+  .cube__inner {
+    animation-delay: calc(var(--uib-speed) * -0.2);
+  }
+}
+
+@keyframes jump {
+  0% {
+    transform: translateY(0px);
+  }
+
+  30% {
+    transform: translateY(0px);
+    animation-timing-function: ease-out;
+  }
+
+  50% {
+    transform: translateY(-200%);
+    animation-timing-function: ease-in;
+  }
+
+  75% {
+    transform: translateY(0px);
+    animation-timing-function: ease-in;
+  }
+}
+
+@keyframes morph {
+  0% {
+    transform: scaleY(1);
+  }
+
+  10% {
+    transform: scaleY(1);
+  }
+
+  20%,
+  25% {
+    transform: scaleY(0.6) scaleX(1.3);
+    animation-timing-function: ease-in-out;
+  }
+
+  30% {
+    transform: scaleY(1.15) scaleX(0.9);
+    animation-timing-function: ease-in-out;
+  }
+
+  40% {
+    transform: scaleY(1);
+  }
+
+  70%,
+  85%,
+  100% {
+    transform: scaleY(1);
+  }
+
+  75% {
+    transform: scaleY(0.8) scaleX(1.2);
+  }
+}

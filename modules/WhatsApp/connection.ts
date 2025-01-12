@@ -18,6 +18,8 @@ import { Boom } from "@hapi/boom";
 import Databases from "../Databases";
 // import fs from 'fs'
 
+let waSock: WASocket | undefined = undefined
+
 /**
  * Try To Connect to WhatsApp services using Baileys.
  * @public
@@ -68,16 +70,20 @@ const tryConnect = async () => {
    */
   sock.ev.on('messages.upsert', async (m) => {
     const msg = m.messages[0];
-    console.log(msg.pushName)
     const thisParticipant = (msg.participant) ? msg.participant : (msg.key.participant) ? msg.key.participant : (msg.key.remoteJid) ? msg.key.remoteJid : ''
 
     /**
      * Make Log for Development.
      */
+    waSock = sock
     console.log(`${(msg.key.fromMe) ? '> [ME] ' : '\n> '}${(msg.key.remoteJid?.includes('@g.us') ? ` (${msg.key.remoteJid}) ` : ' ')}${thisParticipant} => ${(getContentType((msg.message) ? msg.message : undefined)) ? `[ -${getContentType((msg.message) ? msg.message : undefined)?.toUpperCase()}- ] ` : ''}${(msg.message?.conversation) ? msg.message?.conversation : (msg.message?.extendedTextMessage?.text) ? msg.message?.extendedTextMessage?.text : ''}`)
     Databases.chat.push(msg)
     // fs.writeFileSync(`${process.cwd()}/DataStore/temp.json`, JSON.stringify(msg))
   })
+}
+
+const getWaSock = (): WASocket | undefined => {
+  return waSock
 }
 
 /**
@@ -85,5 +91,6 @@ const tryConnect = async () => {
  * @public
  */
 export default {
-  tryConnect
+  tryConnect,
+  getWaSock
 }
