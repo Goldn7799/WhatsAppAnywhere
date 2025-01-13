@@ -15,11 +15,10 @@
 
 import express from 'express'
 import CONFIG from '../../CONFIG'
-import { Server, Socket } from 'socket.io'
+import { Server } from 'socket.io'
 import http from 'http'
 import Databases from '../Databases'
 import auth from './auth'
-import WhatsApp from '../WhatsApp'
 
 const app = express()
 const server = http.createServer(app)
@@ -61,7 +60,7 @@ io.on('connection', (sock) => {
 
   sock.on('sendToken', (token) => {
     thisToken = token
-    if (auth.checkAccess(thisToken)) sendAllUpdate(sock)
+    if (auth.checkAccess(thisToken)) sendAllUpdate()
   })
   sock.on('loginToken', ({ username, password }) => {
     const token = auth.login(username, password)
@@ -77,7 +76,7 @@ io.on('connection', (sock) => {
       cache.chat = JSON.stringify(thisChatPreview)
       sock.emit('chatPreview', thisChatPreview)
     };
-
+    
     if (opennedUserChat) {
       const thisUserChat = Databases.chat.getUserChat(opennedUserChat)
       if (JSON.stringify(thisUserChat)?.length > cache.userChat) {
@@ -85,6 +84,7 @@ io.on('connection', (sock) => {
         sock.emit('userChat', thisUserChat)
       };
     };
+
     setTimeout(() => {
       if (isConnected) return sendPartialUpdate();
     }, 1200);
@@ -106,14 +106,6 @@ io.on('connection', (sock) => {
 
   sock.on('checkToken', (token) => {
     sock.emit('checkToken', auth.checkAccess(token))
-  })
-
-  sock.on('profilePic', async (jid) => {
-    try {
-      sock.emit('profilePic', await WhatsApp.connection.getWaSock()?.profilePictureUrl(jid, 'image'))
-    } catch {
-      sock.emit('profilePic', undefined)
-    }
   })
 })
 

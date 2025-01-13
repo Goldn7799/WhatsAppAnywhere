@@ -33,34 +33,41 @@ window.onload = () => {
   }
 }
 
-const getPP = async (jid) => {
-  return new Promise((resolve) => {
-    sock.emit('profilePic', jid)
-    sock.on('profilePic', (url) => {
-      resolve(url)
-    })
-  })
+function previewMessageParser(text) {
+  return text.replace('[ME]', 'You').replace('[stickerMessage]', '🌠 Sticker').replace('[audioMessage]', '🎧 Audio').replace('[imageMessage]', '📷 Image').replace('[videoMessage]', '🎥 Video').replace('[documentMessage]', '🗃️ File').replace('[locationMessage]', '🗺️ Location')
 }
 
 const chatList = document.getElementById('chatList')
 sock.on('chatPreview', async (list) => {
   console.log(list)
-  let finalElement = ''
+  const isFirst = chatList.innerHTML.toString().includes('center')
+  const firstElmStr = (!isFirst) ? chatList.querySelector('div').innerHTML.toString() : ''
+  const temp = `${chatList.innerHTML}`
+  chatList.innerHTML = ''
   for (const chat of list) {
     const time = new Date(chat.timestamp * 1000)
-    finalElement += `
-      <div class="chat">
-        <img src="${chat.profile || './icon.png'}" alt="${chat.displayName} Profile" />
+    const timeHours = time.getHours()
+    const timeAmPm = (timeHours >= 12) ? 'PM' : 'AM'
+    const time12 = (timeHours) ? timeHours % 12 : 12
+
+    const thisElement = document.createElement('div')
+    thisElement.onclick = () => {console.log(chat.remote)}
+    thisElement.classList.add('chat')
+    if (isFirst || (!temp.includes(chat.displayName))) thisElement.classList.add('animate');
+    if (!isFirst && list[0].remote === chat.remote && !firstElmStr.includes(chat.displayName)) thisElement.classList.add('animateUpdate');
+    if (!isFirst && list[0].remote === chat.remote && firstElmStr.includes(chat.displayName)) thisElement.classList.add('animateMsgUpdate');
+    thisElement.innerHTML = `
+        <img src="${chat.profile || './userpic.png'}" alt="${chat.displayName} Profile" />
         <div class="info">
           <h4>${chat.displayName}</h4>
-          <p>${chat.lastChat}</p>
+          <p>${previewMessageParser(chat.lastChat)}</p>
         </div>
         <div class="time">
-          <p>${time.getHours()}:${time.getMinutes()}</p>
+          <p>${time12}:${(time.getMinutes().toString().padStart(2, '0'))} ${timeAmPm}</p>
         </div>
-      </div>
     `
+    if (isFirst) await new Promise((resolve) => setTimeout(() => resolve(), 50))
+    chatList.appendChild(thisElement)
     // await new Promise((resolve) => setTimeout(() => resolve(), 500))
   }
-  chatList.innerHTML = finalElement
 })
