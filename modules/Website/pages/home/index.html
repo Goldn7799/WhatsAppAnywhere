@@ -8,46 +8,59 @@
   <title>Home - WhatsApp Anywhere</title>
 </head>
 <body>
-  <div id="main">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary homenav">
+  <div id="homePG" class="show">
+    <div id="main">
+      <nav class="navbar navbar-expand-lg bg-body-tertiary homenav">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">WhatsApp <b>Anywhere</b></a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Updates</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div id="chatList">
+        <center>
+          <div class="containerCube">
+            <div class="cube"><div class="cube__inner"></div></div>
+            <div class="cube"><div class="cube__inner"></div></div>
+            <div class="cube"><div class="cube__inner"></div></div>
+          </div>
+        </center>
+      </div>
+      <div id="updates" class="d-none">
+        <center>
+          <div class="containerCube">
+            <div class="cube"><div class="cube__inner"></div></div>
+            <div class="cube"><div class="cube__inner"></div></div>
+            <div class="cube"><div class="cube__inner"></div></div>
+          </div>
+        </center>
+      </div>
+    </div>
+  </div>
+  <div id="chatUser" class="d-none">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">WhatsApp <b>Anywhere</b></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Updates</a>
-            </li>
-          </ul>
+        <div class="align-items-center d-flex flex-col">
+          <button class="btn backBtn align-items-center d-flex flex-col"><i class="fa-solid fa-arrow-left fa-xl"></i><img src="./userpic.png" alt="UserPic"></button>
+          <h5 class="fw-bold username">Username</h5>
         </div>
       </div>
     </nav>
-    <div id="chatList">
-      <center>
-        <div class="containerCube">
-          <div class="cube"><div class="cube__inner"></div></div>
-          <div class="cube"><div class="cube__inner"></div></div>
-          <div class="cube"><div class="cube__inner"></div></div>
-        </div>
-      </center>
-    </div>
-    <div id="updates">
-      <center>
-        <div class="containerCube">
-          <div class="cube"><div class="cube__inner"></div></div>
-          <div class="cube"><div class="cube__inner"></div></div>
-          <div class="cube"><div class="cube__inner"></div></div>
-        </div>
-      </center>
-    </div>
+    <div id="chats"></div>
   </div>
-  <div id="chatUser" style="display: none;"></div>
   <script type="module" src="./home/main.js"></script>
+  <script src="https://kit.fontawesome.com/e330da5781.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

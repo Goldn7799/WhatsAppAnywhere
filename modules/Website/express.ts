@@ -19,6 +19,7 @@ import { Server } from 'socket.io'
 import http from 'http'
 import Databases from '../Databases'
 import auth from './auth'
+import { getContentType } from '@whiskeysockets/baileys'
 
 const app = express()
 const server = http.createServer(app)
@@ -107,6 +108,8 @@ io.on('connection', (sock) => {
   sock.on('checkToken', (token) => {
     sock.emit('checkToken', auth.checkAccess(token))
   })
+
+  sock.emit('functionsGCT', getContentType.toString())
 })
 
 server.listen(CONFIG.express.port, () => {
