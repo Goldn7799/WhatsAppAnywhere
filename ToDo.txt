@@ -1,0 +1,4 @@
+- Make Media Download (Client & Server)
+- Media Chat UI (Client)
+- Send Media (Client & Server)
+- Sticker Pannel (Client)(OPTIONAL)
