@@ -95,6 +95,7 @@ async function openChat(jid) {
   })
 
   isFirst = true
+  lastChat = undefined
   const thisTempUser = tempData.user[jid]
   const chatUser = document.getElementById('chatUser')
   chatUser.querySelector('img').src = thisTempUser.profile || './userpict.png'
@@ -132,7 +133,6 @@ async function openChat(jid) {
   }
 
 sock.on('userChat', async (userc) => {
-  lastChat = undefined
   if (document.querySelector('.sendChat').querySelector('.btn').classList.contains('animateSend')) {
     document.querySelector('.sendChat').querySelector('.btn').classList.remove('animateSend')
     setTimeout(() => {
