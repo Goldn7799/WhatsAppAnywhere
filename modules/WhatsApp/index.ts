@@ -15,7 +15,7 @@
 
 import connection from "./connection";
 
-// connection.tryConnect()
+connection.tryConnect()
 
 export default {
   connection

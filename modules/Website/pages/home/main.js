@@ -79,51 +79,116 @@ function timeParser(timestamp) {
   return `${time12}:${(time.getMinutes().toString().padStart(2, '0'))} ${timeAmPm}`
 }
 
+const chats = document.getElementById('chats')
+let isFirst = true
+let lastChat = undefined
 async function openChat(jid) {
   document.getElementById('chatUser').classList.remove('d-none')
   document.getElementById('chatUser').classList.add('show')
-  setTimeout(() => {
-    document.getElementById('homePG').classList.add('d-none')
-    document.getElementById('chatUser').classList.remove('show')
-  }, 200);
+  document.getElementById('chats').innerHTML = ''
+  await new Promise ((resolve) => {
+    setTimeout(() => {
+      document.getElementById('homePG').classList.add('d-none')
+      document.getElementById('chatUser').classList.remove('show')
+      resolve()
+    }, 200);
+  })
 
+  isFirst = true
   const thisTempUser = tempData.user[jid]
   const chatUser = document.getElementById('chatUser')
   chatUser.querySelector('img').src = thisTempUser.profile || './userpict.png'
   chatUser.querySelector('.username').innerHTML = thisTempUser.displayName
 
-  sock.emit('userChat', jid)
-  sock.on('userChat', (userc) => {
-    const chats = document.getElementById('chats')
-    chats.innerHTML = ''
-    let lastChat = undefined
-    for (const chat of userc) {
-      const thisElement = document.createElement('div')
-      thisElement.classList.add('thisChat')
-      const chatType = getContentType(chat.message || undefined)
-      const mediaCaption =  chat.message?.imageMessage?.caption || chat.message?.videoMessage?.caption || undefined
-      const thisParticipant = chat.key?.participant || chat.participant || `${chat.key.fromMe}`
-      if (chat.key.fromMe) thisElement.classList.add('fromMe');
-      if (lastChat !== thisParticipant) {
-        if (chat.key.fromMe) {
-          thisElement.classList.add('right')
-        } else {
-          thisElement.classList.add('left')
-        }
-      };
-      thisElement.innerHTML = `
-        <div class="message">
-          ${(chat.key.remoteJid.endsWith('@g.us') && !chat.key.fromMe) ? `<p class="name${(chat.pushName) ? ' hasName' : ''}">${(chat.pushName) ? `<span>${chat.pushName}</span>` : ''}<span>${jidToWaNumber(thisParticipant)}</span></p>` : ''}
-          <p class="thisMsg">${messageParser((chat.message?.conversation) ? chat.message.conversation : (chat.message?.extendedTextMessage?.text) ? chat.message?.extendedTextMessage?.text : `[${chatType}] ${mediaCaption || ''}`)}</p>
-          <p class="time">${timeParser(chat.messageTimestamp)}</p>
-          </div>
-      `
-      lastChat = thisParticipant
-      chats.appendChild(thisElement)
-    }
-    chats.scrollTop = chats.scrollHeight
-  })
+  setTimeout(() => {
+    sock.emit('userChat', jid)
+  }, 200);
 }
+
+  function toChat(chat) {
+    const thisElement = document.createElement('div')
+    thisElement.classList.add('thisChat')
+    const chatType = getContentType(chat.message || undefined)
+    const mediaCaption =  chat.message?.imageMessage?.caption || chat.message?.videoMessage?.caption || undefined
+    const thisParticipant = chat.key?.participant || chat.participant || `${chat.key.fromMe}`
+    if (chat.key.fromMe) thisElement.classList.add('fromMe');
+    if (isFirst) thisElement.classList.add('render');
+    if (lastChat !== thisParticipant) {
+      if (chat.key.fromMe) {
+        thisElement.classList.add('right')
+      } else {
+        thisElement.classList.add('left')
+      }
+    };
+    thisElement.innerHTML = `
+      <div class="message">
+        ${(chat.key.remoteJid.endsWith('@g.us') && !chat.key.fromMe) ? `<p class="name${(chat.pushName) ? ' hasName' : ''}">${(chat.pushName) ? `<span>${chat.pushName}</span>` : ''}<span>${jidToWaNumber(thisParticipant)}</span></p>` : ''}
+        <p class="thisMsg">${messageParser((chat.message?.conversation) ? chat.message.conversation : (chat.message?.extendedTextMessage?.text) ? chat.message?.extendedTextMessage?.text : `[${chatType}] ${mediaCaption || ''}`)}</p>
+        <p class="time">${timeParser(chat.messageTimestamp)}</p>
+        </div>
+    `
+    lastChat = thisParticipant
+    return thisElement
+  }
+
+sock.on('userChat', async (userc) => {
+  lastChat = undefined
+  if (document.querySelector('.sendChat').querySelector('.btn').classList.contains('animateSend')) {
+    document.querySelector('.sendChat').querySelector('.btn').classList.remove('animateSend')
+    setTimeout(() => {
+      document.querySelector('.sendChat').querySelector('.btn').classList.add('animateSendB')
+      setTimeout(() => {
+        document.querySelector('.sendChat').querySelector('.btn').classList.remove('animateSendB')
+      }, 500);
+    }, 5);
+  };
+  if (isFirst) {
+    // chats.style.opacity = 0
+    for (const chat of userc) {
+      chats.appendChild(toChat(chat))
+    }
+  } else {
+    for (const chat of userc) {
+      const msg = toChat(chat)
+      msg.classList.add('new')
+      chats.appendChild(msg)
+      chats.scrollTop = chats.scrollHeight
+    }
+  }
+  console.log(userc)
+  if (isFirst) {
+    // chats.style.opacity = 1
+    chats.scrollTop = chats.scrollHeight
+  }
+  isFirst = false
+})
+
+function sendChat(message) {
+  sock.emit('sendChat', message)
+  document.getElementById('sendChatInput').value = ''
+  document.querySelector('.sendChat').querySelector('.btn').classList.add('animateSend')
+}
+
+document.getElementById('sendChatInput').addEventListener('keydown', (evn) => {
+  const value = document.getElementById('sendChatInput').value
+  if (value.trim().length > 0 && evn.key === 'Enter') {
+    sendChat(value)
+  };
+})
+document.querySelector('.sendChat').querySelector('.btn').addEventListener('click', () => {
+  const value = document.getElementById('sendChatInput').value
+  if (value.trim().length > 0) {
+    sendChat(value)
+  };
+})
+setInterval(() => {
+  const value = document.getElementById('sendChatInput').value
+  if (value.trim().length > 0) {
+    document.querySelector('.sendChat').querySelector('.btn').classList.remove('deactive')
+  } else {
+    document.querySelector('.sendChat').querySelector('.btn').classList.add('deactive')
+  }
+}, 100);
 
 async function closeChat() {
   document.getElementById('chatList').querySelectorAll('.animate').forEach((a) => { a.classList.remove('animate') })
@@ -139,7 +204,6 @@ document.querySelector('.backBtn').addEventListener('click', () => closeChat())
 
 const chatList = document.getElementById('chatList')
 sock.on('chatPreview', async (list) => {
-  console.log(list)
   const isFirst = chatList.innerHTML.toString().includes('center')
   const firstElmStr = (!isFirst) ? chatList.querySelector('div').innerHTML.toString() : ''
   const temp = `${chatList.innerHTML}`

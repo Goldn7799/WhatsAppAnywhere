@@ -171,6 +171,8 @@ body {
   background-color: #191c1f;
   width: 100%;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 #chatUser.show {
@@ -214,7 +216,8 @@ body {
 
 #chatUser #chats {
   width: 100%;
-  height: 90vh;
+  /* height: 85vh; */
+  flex-grow: 1;
   overflow-x: hidden;
   overflow-y: scroll;
   scroll-behavior: smooth;
@@ -231,6 +234,10 @@ body {
 #chatUser #chats .thisChat.fromMe {
   justify-content: end;
 }
+#chatUser #chats .thisChat.left {
+  justify-content: start;
+}
+
 
 #chatUser #chats .thisChat .message {
   position: relative;
@@ -250,6 +257,7 @@ body {
 
 #chatUser #chats .thisChat.left .message {
   margin-top: 10px;
+  
 }
 
 #chatUser #chats .thisChat.left .message::after {
@@ -308,6 +316,211 @@ body {
   text-align: right;
   margin-bottom: -5px;
   margin-top: -5px;
+}
+
+#chatUser #chats .thisChat.render {
+  animation-name: chatRender;
+  animation-duration: 0.5s;
+}
+
+#chatUser #chats .thisChat.left.new {
+  animation-name: chatNewL;
+  animation-duration: 0.6s;
+}
+#chatUser #chats .thisChat.fromMe.new {
+  animation-name: chatNewR;
+  animation-duration: 0.6s;
+}
+
+#chatUser .sendChat {
+  width: 100%;
+  overflow-x: hidden;
+  min-height: 45px;
+  max-height: 45px;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+}
+
+#chatUser .sendChat #sendChatInput {
+  flex-grow: 1;
+  border-radius: 10px;
+  padding-left: 6px;
+  border-style: none;
+  font-size: 14px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+}
+
+#chatUser  .sendChat #sendChatInput:focus {
+  border-style: none;
+  outline: none;
+}
+
+#chatUser  .sendChat .btn {
+  background-color: rgb(51, 140, 255);
+  border-radius: 50%;
+  margin-left: 5px;
+  margin-top: -2.5px;
+  height: 40px;
+  width: 40px;
+  text-align: center;
+  font-size: 12px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+#chatUser  .sendChat .btn i {
+  margin-left: -3px;
+}
+
+#chatUser  .sendChat .btn:hover {
+  box-shadow: 0px 0px 5px 2px white;
+  background-color: rgb(40, 112, 206);
+}
+
+#chatUser  .sendChat .btn.animateSend {
+  animation-name: sendChatBtnS;
+  animation-duration: 1s;
+  opacity: 0;
+}
+
+#chatUser  .sendChat .btn.animateSendB {
+  animation-name: sendChatBtnB;
+  animation-duration: 0.5s;
+  opacity: 1;
+}
+
+#chatUser  .sendChat .btn.deactive {
+  background-color: #2a3540;
+}
+#chatUser  .sendChat .btn.deactive:active {
+  background-color: rgb(163, 45, 45);
+}
+
+@keyframes sendChatBtnS {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+}
+  80% {
+    opacity: 1;
+    transform: scale(0.6);
+    -webkit-transform: scale(0.6);
+    -moz-transform: scale(0.6);
+    -ms-transform: scale(0.6);
+    -o-transform: scale(0.6);
+}
+  100% {
+    opacity: 1;
+    transform: scale(0.6) translateX(100px);
+    -webkit-transform: scale(0.6) translateX(100px);
+    -moz-transform: scale(0.6) translateX(100px);
+    -ms-transform: scale(0.6) translateX(100px);
+    -o-transform: scale(0.6) translateX(100px);
+}
+}
+@keyframes sendChatBtnB {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateX(100px);
+    -webkit-transform: scale(1) translateX(100px);
+    -moz-transform: scale(1) translateX(100px);
+    -ms-transform: scale(1) translateX(100px);
+    -o-transform: scale(1) translateX(100px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.9, 1) translateX(-10px);
+    -webkit-transform: scale(0.9, 1) translateX(-10px);
+    -moz-transform: scale(0.9, 1) translateX(-10px);
+    -ms-transform: scale(0.9, 1) translateX(-10px);
+    -o-transform: scale(0.9, 1) translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1, 1) translateX(0px);
+    -webkit-transform: scale(1, 1) translateX(0px);
+    -moz-transform: scale(1, 1) translateX(0px);
+    -ms-transform: scale(1, 1) translateX(0px);
+    -o-transform: scale(1, 1) translateX(0px);
+  }
+}
+
+@keyframes chatNewR {
+  0% {
+    transform: translateX(100%) scale(1, 0);
+    -webkit-transform: translateX(100%) scale(1, 0);
+    -moz-transform: translateX(100%) scale(1, 0);
+    -ms-transform: translateX(100%) scale(1, 0);
+    -o-transform: translateX(100%) scale(1, 0);
+}
+  40% {
+  transform: translateX(100%) scale(1, 0);
+  -webkit-transform: translateX(100%) scale(1, 0);
+  -moz-transform: translateX(100%) scale(1, 0);
+  -ms-transform: translateX(100%) scale(1, 0);
+  -o-transform: translateX(100%) scale(1, 0);
+  }
+  100% {
+    transform: translateX(0%) scale(1, 1);
+    -webkit-transform: translateX(0%) scale(1, 1);
+    -moz-transform: translateX(0%) scale(1, 1);
+    -ms-transform: translateX(0%) scale(1, 1);
+    -o-transform: translateX(0%) scale(1, 1);
+}
+}
+@keyframes chatNewL {
+  0% {
+    transform: translateX(-100%) scale(1, 0);
+    -webkit-transform: translateX(-100%) scale(1, 0);
+    -moz-transform: translateX(-100%) scale(1, 0);
+    -ms-transform: translateX(-100%) scale(1, 0);
+    -o-transform: translateX(-100%) scale(1, 0);
+}
+  40% {
+  transform: translateX(-100%) scale(1, 0);
+  -webkit-transform: translateX(-100%) scale(1, 0);
+  -moz-transform: translateX(-100%) scale(1, 0);
+  -ms-transform: translateX(-100%) scale(1, 0);
+  -o-transform: translateX(-100%) scale(1, 0);
+}
+  100% {
+    transform: translateX(0%) scale(1, 1);
+    -webkit-transform: translateX(0%) scale(1, 1);
+    -moz-transform: translateX(0%) scale(1, 1);
+    -ms-transform: translateX(0%) scale(1, 1);
+    -o-transform: translateX(0%) scale(1, 1);
+}
+}
+
+@keyframes chatRender {
+  0% {
+    opacity: 0;
+    transform: scale(1, 0.9);
+    -webkit-transform: scale(1, 0.9);
+    -moz-transform: scale(1, 0.9);
+    -ms-transform: scale(1, 0.9);
+    -o-transform: scale(1, 0.9);
+}
+  100% {
+    opacity: 1;
+    transform: scale(1, 1);
+    -webkit-transform: scale(1, 1);
+    -moz-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+}
 }
 
 @keyframes chatUserShow {

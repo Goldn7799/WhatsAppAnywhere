@@ -20,6 +20,7 @@ import http from 'http'
 import Databases from '../Databases'
 import auth from './auth'
 import { getContentType } from '@whiskeysockets/baileys'
+import WhatsApp from '../WhatsApp'
 
 const app = express()
 const server = http.createServer(app)
@@ -53,6 +54,7 @@ io.on('connection', (sock) => {
   let thisToken: string | undefined = undefined
   let isConnected = true
   let opennedUserChat: string | undefined = undefined
+  let isNewOpennedUserChat: boolean = true
 
   sock.on('disconnect', (reason) => {
     console.log(`User Disconnected [${reason.toUpperCase()}]`)
@@ -80,9 +82,11 @@ io.on('connection', (sock) => {
     
     if (opennedUserChat) {
       const thisUserChat = Databases.chat.getUserChat(opennedUserChat)
-      if (JSON.stringify(thisUserChat)?.length > cache.userChat) {
-        cache.userChat = JSON.stringify(thisUserChat)?.length
-        sock.emit('userChat', thisUserChat)
+      const chatLength = thisUserChat?.length || 0
+      if (chatLength > cache.userChat || isNewOpennedUserChat) {
+        if (!isNewOpennedUserChat) sock.emit('userChat', thisUserChat?.slice(cache.userChat - chatLength))
+        cache.userChat = chatLength
+        isNewOpennedUserChat = false
       };
     };
 
@@ -99,6 +103,7 @@ io.on('connection', (sock) => {
   sock.on('userChat', (jid) => {
     if (!auth.checkAccess(thisToken)) return;
     opennedUserChat = jid
+    isNewOpennedUserChat = true
     sock.emit('userChat', Databases.chat.getUserChat(jid))
   })
   sock.on('closeUserChat', () => {
@@ -110,6 +115,11 @@ io.on('connection', (sock) => {
   })
 
   sock.emit('functionsGCT', getContentType.toString())
+
+  sock.on('sendChat', (msg) => {
+    if (!auth.checkAccess(thisToken)) return;
+    if (opennedUserChat) WhatsApp.connection.getWaSock()?.sendMessage(opennedUserChat, { text: msg });
+  })
 })
 
 server.listen(CONFIG.express.port, () => {
