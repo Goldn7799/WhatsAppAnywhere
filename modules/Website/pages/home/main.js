@@ -98,7 +98,7 @@ async function openChat(jid) {
   lastChat = undefined
   const thisTempUser = tempData.user[jid]
   const chatUser = document.getElementById('chatUser')
-  chatUser.querySelector('img').src = thisTempUser.profile || './userpict.png'
+  chatUser.querySelector('img').src = thisTempUser.profile || './userpic.png'
   chatUser.querySelector('.username').innerHTML = thisTempUser.displayName
 
   setTimeout(() => {
