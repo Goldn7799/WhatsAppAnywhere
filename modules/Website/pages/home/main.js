@@ -46,7 +46,7 @@ function previewMessageParser(text) {
 }
 
 function messageParser(text) {
-  return text.replaceAll(/\*(.*)\*/g, '<b>$1</b>')
+  return text.replaceAll(/\*(.*)\*/g, '<b>$1</b>').replaceAll('\n', '<br/>')
 }
 
 const jidToWaNumber = (jid, formats) => {
@@ -138,18 +138,19 @@ async function toReaction(chat) {
   const thisMessage = chat.message?.reactionMessage
   const participant = chat.key?.participant || chat.key?.remoteJid
   const thisReacts = document.getElementById(`${thisMessage?.key?.id}reaction`)
-  const prevReact = document.getElementById(`${chat.key?.remoteJid?.split('@')[0]}${participant.split('@')[0]}react`) || undefined
+  const prevReact = document.getElementById(`${thisMessage?.key?.id}${participant.split('@')[0]}react`) || undefined
   const newReact = document.createElement('p')
-  if (!thisReacts) return
-  if (prevReact) {
-    prevReact.classList.add('new')
-    prevReact.innerHTML = thisMessage?.text
-    return
-  };
-  thisReacts.classList.remove('d-none')
-  if (thisReacts.querySelectorAll('p').length > 0) newReact.classList.add('new')
-  newReact.id = `${chat.key?.remoteJid?.split('@')[0]}${participant.split('@')[0]}react`
+
+  if (!thisReacts || !thisMessage?.text) return;
+
+  newReact.id = `${thisMessage?.key?.id}${participant.split('@')[0]}react`
   newReact.innerHTML = `${thisMessage?.text}`
+  newReact.classList.add('new')
+
+  if (prevReact) prevReact.remove()
+  if (thisReacts.querySelectorAll('p').length > 0 || prevReact) newReact.classList.add('new')
+
+  thisReacts.classList.remove('d-none')
   thisReacts.appendChild(newReact)
 }
 
@@ -182,7 +183,6 @@ sock.on('userChat', async (userc) => {
         }
     }
   }
-  console.log(userc)
   if (isFirst) {
     // chats.style.opacity = 1
     chats.scrollTop = chats.scrollHeight

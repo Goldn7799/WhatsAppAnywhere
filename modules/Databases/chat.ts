@@ -57,7 +57,7 @@ const getPreview = async (): Promise<chatPreviewT[]> => {
           remote,
           displayName: thisChatProperties.displayName,
           profile: thisChatProperties.profile,
-          lastChat: `${(lastChat.key.fromMe) ? '[ME]: ' : (thisChatProperties.group) ? parser.jidToWaNumber(lastChat.key.participant || lastChat.participant || '') + ': ' : ''}${(lastChat.message?.conversation) ? lastChat.message.conversation : (lastChat.message?.extendedTextMessage?.text) ? lastChat.message?.extendedTextMessage?.text : `[${chatType}] ${mediaCaption || ''}`}`,
+          lastChat: `${(lastChat.key.fromMe) ? '[ME]: ' : (thisChatProperties.group) ? (lastChat.pushName || parser.jidToWaNumber(lastChat.key.participant || lastChat.participant || '')) + ': ' : ''}${(lastChat.message?.conversation) ? lastChat.message.conversation : (lastChat.message?.extendedTextMessage?.text) ? lastChat.message?.extendedTextMessage?.text : `[${chatType}] ${mediaCaption || ''}`}`,
           timestamp: (typeof(lastChat.messageTimestamp) === 'number') ? lastChat.messageTimestamp : Number(lastChat.messageTimestamp)
         })
       };
