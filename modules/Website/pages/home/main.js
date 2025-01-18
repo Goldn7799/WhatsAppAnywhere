@@ -106,31 +106,52 @@ async function openChat(jid) {
   }, 200);
 }
 
-  function toChat(chat) {
-    const thisElement = document.createElement('div')
-    thisElement.classList.add('thisChat')
-    const chatType = getContentType(chat.message || undefined)
-    const mediaCaption =  chat.message?.imageMessage?.caption || chat.message?.videoMessage?.caption || undefined
-    const thisParticipant = chat.key?.participant || chat.participant || `${chat.key.fromMe}`
-    if (chat.key.fromMe) thisElement.classList.add('fromMe');
-    if (isFirst) thisElement.classList.add('render');
-    if (lastChat !== thisParticipant) {
-      if (chat.key.fromMe) {
-        thisElement.classList.add('right')
-      } else {
-        thisElement.classList.add('left')
-      }
-    };
-    thisElement.innerHTML = `
-      <div class="message">
-        ${(chat.key.remoteJid.endsWith('@g.us') && !chat.key.fromMe) ? `<p class="name${(chat.pushName) ? ' hasName' : ''}">${(chat.pushName) ? `<span>${chat.pushName}</span>` : ''}<span>${jidToWaNumber(thisParticipant)}</span></p>` : ''}
-        <p class="thisMsg">${messageParser((chat.message?.conversation) ? chat.message.conversation : (chat.message?.extendedTextMessage?.text) ? chat.message?.extendedTextMessage?.text : `[${chatType}] ${mediaCaption || ''}`)}</p>
-        <p class="time">${timeParser(chat.messageTimestamp)}</p>
-        </div>
-    `
-    lastChat = thisParticipant
-    return thisElement
-  }
+function toChat(chat) {
+  const thisElement = document.createElement('div')
+  thisElement.classList.add('thisChat')
+  thisElement.id = chat.key.id
+  const chatType = getContentType(chat.message || undefined)
+  const mediaCaption =  chat.message?.imageMessage?.caption || chat.message?.videoMessage?.caption || undefined
+  const thisParticipant = chat.key?.participant || chat.participant || `${chat.key.fromMe}`
+  if (chat.key.fromMe) thisElement.classList.add('fromMe');
+  if (isFirst) thisElement.classList.add('render');
+  if (lastChat !== thisParticipant) {
+    if (chat.key.fromMe) {
+      thisElement.classList.add('right')
+    } else {
+      thisElement.classList.add('left')
+    }
+  };
+  thisElement.innerHTML = `
+    <div class="message">
+      ${(chat.key.remoteJid.endsWith('@g.us') && !chat.key.fromMe) ? `<p class="name${(chat.pushName) ? ' hasName' : ''}">${(chat.pushName) ? `<span>${chat.pushName}</span>` : ''}<span>${jidToWaNumber(thisParticipant)}</span></p>` : ''}
+      <p class="thisMsg">${messageParser((chat.message?.conversation) ? chat.message.conversation : (chat.message?.extendedTextMessage?.text) ? chat.message?.extendedTextMessage?.text : `[${chatType}] ${mediaCaption || ''}`)}</p>
+      <p class="time">${timeParser(chat.messageTimestamp)}</p>
+    </div>
+    <div id="${chat.key.id}reaction" class="reaction d-none"></div>
+  `
+  lastChat = thisParticipant
+  return thisElement
+}
+
+async function toReaction(chat) {
+  const thisMessage = chat.message?.reactionMessage
+  const participant = chat.key?.participant || chat.key?.remoteJid
+  const thisReacts = document.getElementById(`${thisMessage?.key?.id}reaction`)
+  const prevReact = document.getElementById(`${chat.key?.remoteJid?.split('@')[0]}${participant.split('@')[0]}react`) || undefined
+  const newReact = document.createElement('p')
+  if (!thisReacts) return
+  if (prevReact) {
+    prevReact.classList.add('new')
+    prevReact.innerHTML = thisMessage?.text
+    return
+  };
+  thisReacts.classList.remove('d-none')
+  if (thisReacts.querySelectorAll('p').length > 0) newReact.classList.add('new')
+  newReact.id = `${chat.key?.remoteJid?.split('@')[0]}${participant.split('@')[0]}react`
+  newReact.innerHTML = `${thisMessage?.text}`
+  thisReacts.appendChild(newReact)
+}
 
 sock.on('userChat', async (userc) => {
   if (document.querySelector('.sendChat').querySelector('.btn').classList.contains('animateSend')) {
@@ -145,14 +166,20 @@ sock.on('userChat', async (userc) => {
   if (isFirst) {
     // chats.style.opacity = 0
     for (const chat of userc) {
-      chats.appendChild(toChat(chat))
+      const chatType = getContentType(chat.message || undefined)
+      if (chatType === 'reactionMessage') toReaction(chat)
+        else chats.appendChild(toChat(chat))
     }
   } else {
     for (const chat of userc) {
-      const msg = toChat(chat)
-      msg.classList.add('new')
-      chats.appendChild(msg)
-      chats.scrollTop = chats.scrollHeight
+      const chatType = getContentType(chat.message || undefined)
+      if (chatType === 'reactionMessage') toReaction(chat)
+        else {
+          const msg = toChat(chat)
+          msg.classList.add('new')
+          chats.appendChild(msg)
+          chats.scrollTop = chats.scrollHeight
+        }
     }
   }
   console.log(userc)

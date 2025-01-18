@@ -34,11 +34,10 @@ const push = async (message: WAMessage): Promise<void> => {
       };
     };
     try {
-      if (!currentData[remote].profile || `${message.messageStubType}` === 'GROUP_CHANGE_ICON') currentData[remote].profile = await (WhatsApp.connection.getWaSock())?.profilePictureUrl(remote, 'image')
+      if (!currentData[remote].profile || `${message.messageStubType}` === 'GROUP_CHANGE_ICON' || (await fetch(`${currentData[remote].profile}`, { method: 'HEAD' }))?.ok) currentData[remote].profile = await (WhatsApp.connection.getWaSock())?.profilePictureUrl(remote, 'image')
     } catch (err) { console.log(`${err}`) };
     currentData[remote].displayName = (currentData[remote].group) ? currentData[remote].group.subject : (!message.key.fromMe) ? message.pushName || undefined : (!currentData[remote].displayName) ? parser.jidToWaNumber(remote) : currentData[remote].displayName
     currentData[remote].chats?.push(message)
-    main.updateChatHistory(currentData)
   };
 }
 

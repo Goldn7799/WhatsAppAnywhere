@@ -31,7 +31,7 @@ const tryConnect = async () => {
   const { state, saveCreds } = (await useMultiFileAuthState('./DataStore/WhatsAppState'))
   const sock: WASocket = makeWASocket({
     auth: state,
-    browser: Browsers.ubuntu('GeminiOnWA'),
+    browser: Browsers.macOS('WhatsAppAnywhere'),
     printQRInTerminal: true
   })
 
