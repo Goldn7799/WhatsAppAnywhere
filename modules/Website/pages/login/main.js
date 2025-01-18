@@ -29,11 +29,16 @@ window.onload = () => {
   };
 }
 
+const username = document.getElementById('username')
+const password = document.getElementById('password')
 const loginBtn = document.getElementById('loginBtn')
+
+setInterval(() => {
+  loginBtn.disabled = !(username.value.trim() && password.value.trim())
+}, 100);
+
 loginBtn.addEventListener('click', () => {
-  const username = document.getElementById('username').value
-  const password = document.getElementById('password').value
-  sock.emit('loginToken', { username, password })
+  sock.emit('loginToken', { username: username.value, password: password.value })
   sock.on('loginToken', (token) => {
     if (token) {
       localStorage.setItem('token', token)

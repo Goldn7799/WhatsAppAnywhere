@@ -267,7 +267,6 @@ body {
   padding-left: 8px;
   padding-right: 8px;
   display: flex;
-  flex-direction: row;
   animation-name: reactionNew;
   animation-duration: 0.25s;
 }
@@ -277,6 +276,7 @@ body {
 
 #chatUser #chats .thisChat .reaction {
   margin-left: 16.5px;
+  flex-direction: row;
   align-self: start;
   border-radius: 0px 16px 16px 16px;
   -webkit-border-radius: 0px 16px 16px 16px;
@@ -286,6 +286,7 @@ body {
 }
 #chatUser #chats .thisChat.fromMe .reaction {
   margin-right: 16.5px;
+  flex-direction: row-reverse;
   align-self: end;
   border-radius: 16px 0px 16px 16px;
   -webkit-border-radius: 16px 0px 16px 16px;
@@ -391,7 +392,7 @@ body {
   animation-duration: 0.5s;
 }
 
-#chatUser #chats .thisChat.left.new {
+#chatUser #chats .thisChat.sender.new {
   animation-name: chatNewL;
   animation-duration: 0.4s;
 }

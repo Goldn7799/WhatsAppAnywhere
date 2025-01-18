@@ -113,7 +113,8 @@ function toChat(chat) {
   const chatType = getContentType(chat.message || undefined)
   const mediaCaption =  chat.message?.imageMessage?.caption || chat.message?.videoMessage?.caption || undefined
   const thisParticipant = chat.key?.participant || chat.participant || `${chat.key.fromMe}`
-  if (chat.key.fromMe) thisElement.classList.add('fromMe');
+  if (chat.key.fromMe) thisElement.classList.add('fromMe') 
+    else thisElement.classList.add('sender');
   if (isFirst) thisElement.classList.add('render');
   if (lastChat !== thisParticipant) {
     if (chat.key.fromMe) {
@@ -165,12 +166,14 @@ sock.on('userChat', async (userc) => {
     }, 5);
   };
   if (isFirst) {
-    // chats.style.opacity = 0
     for (const chat of userc) {
       const chatType = getContentType(chat.message || undefined)
       if (chatType === 'reactionMessage') toReaction(chat)
         else chats.appendChild(toChat(chat))
     }
+    setTimeout(() => {
+      chats.scrollTop = chats.scrollHeight
+    }, 500);
   } else {
     for (const chat of userc) {
       const chatType = getContentType(chat.message || undefined)
@@ -182,10 +185,6 @@ sock.on('userChat', async (userc) => {
           chats.scrollTop = chats.scrollHeight
         }
     }
-  }
-  if (isFirst) {
-    // chats.style.opacity = 1
-    chats.scrollTop = chats.scrollHeight
   }
   isFirst = false
 })
