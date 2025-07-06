@@ -16,6 +16,7 @@
 import makeWASocket, { Browsers, DisconnectReason, getContentType, useMultiFileAuthState, type WASocket } from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
 import Databases from "../Databases";
+import QRCode from 'qrcode'
 // import fs from 'fs'
 
 let waSock: WASocket | undefined = undefined
@@ -31,8 +32,7 @@ const tryConnect = async () => {
   const { state, saveCreds } = (await useMultiFileAuthState('./DataStore/WhatsAppState'))
   const sock: WASocket = makeWASocket({
     auth: state,
-    browser: Browsers.macOS('WhatsAppAnywhere'),
-    printQRInTerminal: true
+    browser: Browsers.macOS('WhatsAppAnywhere')
   })
 
   /**
@@ -45,9 +45,12 @@ const tryConnect = async () => {
    * Auto Reconnect Feature.
    */
   sock.ev.on('connection.update', async (update) => {
-    const { connection, lastDisconnect } = update
+    const { connection, lastDisconnect, qr } = update
     if (connection === 'connecting') {
       console.log('Conneting...')
+    };
+    if (qr) {
+      console.log(await QRCode.toString(qr, { type: 'terminal', small: true }))
     };
     if (connection === 'close') {
       const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut

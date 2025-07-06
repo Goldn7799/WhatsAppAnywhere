@@ -3,24 +3,30 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@eslint/js": "^9.25.0",
+    "@eslint/js": "^9.30.1",
     "@types/bun": "latest",
-    "eslint": "^9.25.0",
+    "@types/qrcode": "^1.5.5",
+    "eslint": "^9.30.1",
     "globals": "^15.15.0",
-    "typescript-eslint": "^8.30.1"
+    "typescript-eslint": "^8.35.1"
   },
   "peerDependencies": {
     "typescript": "^5.7.3"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.1",
-    "@whiskeysockets/baileys": "^6.7.16",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@whiskeysockets/baileys": "^6.7.18",
     "body-parser": "^1.20.3",
     "express": "^5.1.0",
     "libsignal": "^2.0.1",
+    "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0",
     "socket.io": "^4.8.1"
-  }
+  },
+  "trustedDependencies": [
+    "@whiskeysockets/baileys",
+    "protobufjs"
+  ]
 }
